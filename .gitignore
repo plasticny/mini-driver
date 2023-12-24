@@ -34,3 +34,6 @@
 /backend/asset
 /backend/log
 /backend/temp
+
+# === Release === #
+/release

@@ -86,11 +86,10 @@ export class Folder extends AFolder {
 
 /* folders in the root */
 export const ROOT_PATH = `${dirname(dirname(require.main.filename))}\\asset`
-class Root extends AFolder {
+export class Root extends AFolder {
   constructor() {
     super('Root', null)
     this._path = ROOT_PATH
     this._load_dir()
   }
 }
-export const root = new Root()

@@ -4,7 +4,7 @@ import { File as form_file } from 'formidable'
 
 import { AFileObject, ARetFileObject } from './FileObject'
 import { AFolder, Folder, RetFolder } from './Folder'
-import { root } from './Folder'
+import { Root } from './Folder'
 import { File } from './File'
 
 // default asset folder
@@ -15,6 +15,7 @@ export const TEMP_PATH = `${dirname(dirname(require.main.filename))}\\temp`
 class FileManager {
   // map file object with internal id
   private __file_obj_map : Map<number, AFileObject> = new Map()
+  private __root : Root
 
   constructor() {
     // create nessecery folders
@@ -28,9 +29,11 @@ class FileManager {
       unlinkSync(`${TEMP_PATH}\\${file}`)
     })
     
+    this.__root = new Root()
+
     // add all file objects to the map
-    this.__add_obj(root)
-    const file_objs = root.file_objs
+    this.__add_obj(this.__root)
+    const file_objs = this.__root.file_objs
     while (file_objs.length > 0) {
       const file_obj = file_objs.pop()
       this.__add_obj(file_obj)
