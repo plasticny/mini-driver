@@ -1,0 +1,36 @@
+# ===== Frontend ===== #
+/frontend/.DS_Store
+/frontend/node_modules
+/frontend/dist
+
+/frontend/tests/e2e/reports/
+/frontend/selenium-debug.log
+/frontend/chromedriver.log
+/frontend/geckodriver.log
+
+# local env files
+/frontend/.env.local
+/frontend/.env.*.local
+
+# Log files
+/frontend/npm-debug.log*
+/frontend/yarn-debug.log*
+/frontend/yarn-error.log*
+/frontend/pnpm-debug.log*
+
+# Editor directories and files
+/frontend/.idea
+/frontend/.vscode
+/frontend/*.suo
+/frontend/*.ntvs*
+/frontend/*.njsproj
+/frontend/*.sln
+/frontend/*.sw?
+
+# ==== Store service ==== #
+/backend/node_modules
+/backend/backend_dist
+/backend/frontend_dist
+/backend/asset
+/backend/log
+/backend/temp
