@@ -8,9 +8,9 @@ import { Root } from './Folder'
 import { File } from './File'
 
 // default asset folder
-export const DEFAULT_ASSET_PATH = `${dirname(dirname(require.main.filename))}\\asset`
+export const DEFAULT_ASSET_PATH = `${dirname(dirname(require.main.filename))}/asset`
 // folder to store temp file
-export const TEMP_PATH = `${dirname(dirname(require.main.filename))}\\temp`
+export const TEMP_PATH = `${dirname(dirname(require.main.filename))}/temp`
 
 class FileManager {
   // map file object with internal id
@@ -26,7 +26,7 @@ class FileManager {
 
     // clear temp folder
     readdirSync(TEMP_PATH).forEach((file) => {
-      unlinkSync(`${TEMP_PATH}\\${file}`)
+      unlinkSync(`${TEMP_PATH}/${file}`)
     })
     
     this.__root = new Root()
@@ -124,23 +124,11 @@ class FileManager {
   public add_folder(parent_id : number, name : string) : RetFolder {
     const parent = this.__get_folder(parent_id)
 
-    let folder_nm = ''
-    // esacpe special charater
-    for(const c of name) {
-      folder_nm += (c == '\\' || c == '/' || c == '／' || c == '?' || c == '？' || c == '!' || c == ' ' || c == '！') ? '_' : c
-    }
-
-    // add suffix if file name already exist
-    if (existsSync(`${parent.path}\\${folder_nm}`)) {
-      let i = 1
-      while (existsSync(`${parent.path}\\${folder_nm}_(${i})`)) {
-        i++
-      }
-      folder_nm += `_${i}`
-    }
+    // prepare folder name
+    const folder_nm = this.__prepare_store_name(name, parent)
 
     // create folder
-    mkdirSync(`${parent.path}\\${folder_nm}`)
+    mkdirSync(`${parent.path}/${folder_nm}`)
     const folder = new Folder(folder_nm, parent)
 
     parent.add_obj(folder)
@@ -177,31 +165,48 @@ class FileManager {
     const last_dot_idx = file.originalFilename.lastIndexOf('.')
     const original_file_nm = file.originalFilename.slice(0, last_dot_idx)
     const file_ext = file.originalFilename.slice(last_dot_idx+1)
+    const folder = this.__get_folder(folder_id)
 
-    let file_nm = ''
+    // prepare file name
+    const file_nm = this.__prepare_store_name(original_file_nm, folder, file_ext)
+
+    // move to the target folder
+    renameSync(file.filepath, `${folder.path}/${file_nm}`)
+    // store to the map
+    this.__add_file(file_nm, folder)
+
+    return file_nm
+  }
+  /* ================= File ================= */
+
+  /* ================= Helper Functions ================= */
+  /* modify the name of the received file or folder for the final name stored in the machine */
+  private __prepare_store_name (name : string, folder : Folder, ext : string = '') : string {
+    /*
+      Args:
+        name: the original name of the file or folder, without extension
+        folder: the folder that the file or folder will be in
+        ext:  the extension of the file, for file only.
+              do not add . to the extension. e.g. 'txt', 'jpg'
+    */
+    ext = ext === '' ? '' : `.${ext}`
+
+    let res = ''
     // esacpe special charater
-    for(const c of original_file_nm) {
-      file_nm += (c == '\\' || c == '/' || c == '／' || c == '?' || c == '？' || c == '!' || c == ' ' || c == '！') ? '_' : c
+    for(const c of name) {
+      res += (c == '\\' || c == '/' || c == '／' || c == '?' || c == '？' || c == '!' || c == ' ' || c == '！') ? '_' : c
     }
 
     // add suffix if file name already exist
-    if (existsSync(`${this.__get_folder(folder_id).path}\\${file_nm}.${file_ext}`)) {
+    if (existsSync(`${folder.path}/${res}${ext}`)) {
       let i = 1
-      while (existsSync(`${this.__get_folder(folder_id).path}\\${file_nm}_${i}.${file_ext}`)) {
+      while (existsSync(`${folder.path}/${res}_(${i})${ext}`)) {
         i++
       }
-      file_nm += `_${i}`
+      res += `_${i}`
     }
 
-    const folder = this.__get_folder(folder_id)
-    const full_file_nm = `${file_nm}.${file_ext}`
-    // move to the target folder
-    renameSync(file.filepath, `${folder.path}\\${full_file_nm}`)
-    // store to the map
-    this.__add_file(full_file_nm, folder)
-
-    return full_file_nm
+    return res+ext
   }
-  // ================= File ================= //
 }
 export const file_manager = new FileManager()

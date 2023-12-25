@@ -2,9 +2,9 @@ import axios from 'axios'
 import { File, FileObject, Folder } from '@/structs'
 
 // for development
-// export const api_address = 'localhost:3000'
+export const api_address = 'localhost:3000'
 // for production
-export const api_address = window.location.host
+// export const api_address = window.location.host
 
 /* === file operation api === */
 export function api_download_file (file : File) : void {
