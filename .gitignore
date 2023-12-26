@@ -36,4 +36,5 @@
 /backend/temp
 
 # === Release === #
-/release
+/release/backend_dist
+/release/frontend_dist
