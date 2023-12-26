@@ -39,7 +39,7 @@ export abstract class AFileObject {
 
     if(folder) {
       this._folder = folder
-      this._path = `${folder.path}\\${name}`
+      this._path = `${folder.path}/${name}`
       this._folder.add_obj(this)
     }
   }
